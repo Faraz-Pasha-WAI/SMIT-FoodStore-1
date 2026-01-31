@@ -1,4 +1,5 @@
 import { auth, db } from "./firebase.js";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
@@ -10,18 +11,22 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const roleSelect = document.getElementById("role");
 
+// Signup
 document.getElementById("signupBtn").addEventListener("click", async () => {
-  const email = email.value;
-  const password = document.getElementById("password").value;
-  const role = document.getElementById("role").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  const role = roleSelect.value;
 
   try {
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
     await setDoc(doc(db, "users", userCred.user.uid), {
-      email,
-      role,
+      email: email,
+      role: role,
       isVerified: role === "vendor" ? false : true
     });
 
@@ -30,13 +35,14 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
 
   } catch (error) {
     alert(error.message);
+    console.error(error);
   }
 });
 
-
+// Login
 document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
   try {
     const userCred = await signInWithEmailAndPassword(auth, email, password);
@@ -48,15 +54,16 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
 
   } catch (error) {
     alert(error.message);
+    console.error(error);
   }
 });
 
-
+// Guest
 document.getElementById("guestBtn").addEventListener("click", () => {
   window.location.href = "home.html";
 });
 
-
+// Redirect function
 function redirectUser(role) {
   if (role === "admin") {
     window.location.href = "admin.html";
